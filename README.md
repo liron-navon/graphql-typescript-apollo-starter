@@ -6,6 +6,8 @@ This project follows the article from apollo regarding schema modularization [Mo
 
 ### Getting started
 
+Build `npm run build`
+
 Start the server `npm start`
 
 Start and watch `npm run dev`
