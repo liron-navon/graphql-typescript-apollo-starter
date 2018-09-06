@@ -10,7 +10,7 @@ Start the server `npm start`
 
 Start and watch `npm run dev`
 
-Test `npm run test`
+Test `npm test`
 
 Test and watch `npm run test:watch`
 
