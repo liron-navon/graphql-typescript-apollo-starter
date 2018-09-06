@@ -2,7 +2,7 @@
 
 A starter template for developing a graphql server, can also be used as a mock server simulating a book rating site, similar to goodreads.It uses typescript and express, and it uses jest as a testing framework.
 
-This project follows the article from apollo regarding schema modularization [Modularizing your GraphQL schema code](https://blog.apollographql.com/modularizing-your-graphql-schema-code-d7f71d5ed5f2)
+This project follows the ideas, defined in the article from apollo regarding schema modularization [Modularizing your GraphQL schema code](https://blog.apollographql.com/modularizing-your-graphql-schema-code-d7f71d5ed5f2)
 
 ### Getting started
 
