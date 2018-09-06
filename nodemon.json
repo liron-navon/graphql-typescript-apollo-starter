@@ -1,0 +1,5 @@
+{
+  "watch": ["src"],
+  "exec": "npm start" ,
+  "ext": "js json ts graphql"
+}

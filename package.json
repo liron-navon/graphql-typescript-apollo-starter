@@ -1,0 +1,45 @@
+{
+  "name": "graphql-typescript-apollo-starter",
+  "version": "1.0.0",
+  "description": "A starter template for an apollo graphql server with typescript",
+  "main": "src/index.ts",
+  "scripts": {
+    "nodemon": "nodemon dist",
+    "dev": "nodemon",
+    "build": "webpack",
+    "start": "npm run build && node ./dist/server.js",
+    "test": "jest --forceExit --verbose --detectOpenHandles",
+    "test:watch": "npm run test -- --watchAll",
+    "tslint": "tslint -c tslint.json -p tsconfig.json"
+  },
+  "author": "liron-navon",
+  "repository": "https://github.com/liron-navon/graphql-typescript-apollo-starter",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.0.5",
+    "apollo-server-express": "^2.0.6",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "graphql": "^0.13.2",
+    "graphql-scalar-types": "^2.0.0",
+    "graphql-tools": "^3.1.1",
+    "lodash": "^4.17.10"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/graphql": "^0.13.4",
+    "@types/jest": "^23.3.1",
+    "@types/node": "^10.7.1",
+    "clean-webpack-plugin": "^0.1.19",
+    "jest": "^23.5.0",
+    "jest-raw-loader": "^1.0.1",
+    "nodemon": "^1.18.3",
+    "ts-jest": "^23.1.4",
+    "ts-loader": "^4.5.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1",
+    "webpack": "^4.17.1",
+    "webpack-command": "^0.4.1",
+    "webpack-node-externals": "^1.7.2"
+  }
+}
