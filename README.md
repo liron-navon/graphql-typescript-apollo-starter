@@ -8,9 +8,7 @@ This project follows the ideas, defined in the article from apollo regarding sch
 
 Build `npm run build`
 
-Start the server `npm start`
-
-Start and watch `npm run dev`
+Start and watch `npm start`
 
 Test `npm test`
 

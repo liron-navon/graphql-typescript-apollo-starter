@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "nodemon": "nodemon dist",
-    "dev": "nodemon",
     "build": "webpack",
-    "start": "npm run build && node ./dist/server.js",
+    "start": "nodemon",
+    "start-server": "npm run build && node ./dist/server.js",
     "test": "jest --forceExit --verbose --detectOpenHandles",
     "test:watch": "npm run test -- --watchAll",
     "tslint": "tslint -c tslint.json -p tsconfig.json"

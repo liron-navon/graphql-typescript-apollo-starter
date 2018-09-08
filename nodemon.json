@@ -1,5 +1,5 @@
 {
   "watch": ["src"],
-  "exec": "npm start" ,
+  "exec": "npm run start-server" ,
   "ext": "js json ts graphql"
 }
