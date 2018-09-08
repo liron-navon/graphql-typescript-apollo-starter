@@ -1,6 +1,6 @@
 import {mockBooks, mockWriters, createNewBook, IBook} from 'src/mocks';
 import gql from 'graphql-tag';
-import { withFilter, pubsub } from 'src/graphql/subscriptionManager';
+import {withFilter, pubsub} from 'src/graphql/subscriptionManager';
 
 const typeDefs = gql`
     extend type Query {
@@ -22,7 +22,10 @@ const typeDefs = gql`
     }
 
     extend type Subscription {
+        # called whenever an existing book mutation is called
         bookUpdated(bookId: ID!): BookUpdateSubscription
+        # called when a new book is added
+        bookCreated: Book
     }
 
     type BookUpdateSubscription {
@@ -78,17 +81,23 @@ export default {
             bookListByWriterId: (root, {id}) => mockBooks.filter(b => b.writerId === id),
         },
         Mutation: {
-            bookCreate: (root, {input}) => createNewBook(input),
-            bookRedescribe: (root, { input: { id, description } }) => {
+            bookCreate: (root, {input}) => {
+                const newBook = createNewBook(input);
+                pubsub.publish('bookCreated', {
+                    bookCreated: newBook
+                });
+                return newBook;
+            },
+            bookRedescribe: (root, {input: {id, description}}) => {
                 const mutableBook = mockBooks.find(book => id === book.id);
                 mutableBook.description = description;
                 publishBookUpdate('bookRedescribe', mutableBook);
                 return mutableBook;
             },
-            bookVote: (root, { input: { id, score } }) => {
+            bookVote: (root, {input: {id, score}}) => {
                 const bookToVoteFor = mockBooks.find(book => id === book.id);
                 const newVotes = bookToVoteFor.votes + 1;
-                const newScore = ((bookToVoteFor.score * bookToVoteFor.votes) + score)  / newVotes;
+                const newScore = ((bookToVoteFor.score * bookToVoteFor.votes) + score) / newVotes;
 
                 bookToVoteFor.score = newScore;
                 bookToVoteFor.votes = newVotes;
@@ -102,10 +111,13 @@ export default {
                 subscribe: withFilter(
                     () => pubsub.asyncIterator('bookUpdated'),
                     (payload, update) => {
-                        const { bookUpdated: { book } } = payload
+                        const {bookUpdated: {book}} = payload;
                         return book.id === update.bookId;
                     }
                 )
+            },
+            bookCreated: {
+                subscribe: () => pubsub.asyncIterator('bookCreated')
             }
         },
         Book: {

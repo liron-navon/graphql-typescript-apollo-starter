@@ -19,7 +19,7 @@ export function createNewBook(bookData: IBook): IBook {
 }
 
 export function createNewWriter(writerData: IWriter): IWriter {
-    writerData.id = createBookId();
+    writerData.id = createWriterId();
     mockWriters.push(writerData);
     return writerData;
 }
