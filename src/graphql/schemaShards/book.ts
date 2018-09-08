@@ -4,27 +4,27 @@ import {withFilter, pubsub} from 'src/graphql/subscriptionManager';
 
 const typeDefs = gql`
     extend type Query {
-        # list all books
+        " list all books "
         bookList: [Book]
-        # find a book by id
+        " find a book by id "
         bookFindById(id: ID!): Book
-        # find books by writer id
+        " find books by writer id "
         bookListByWriterId(writerId: ID!): [Book]
     }
 
     extend type Mutation {
-        # create a new book
+        " create a new book "
         bookCreate(input: BookCreateInput!): Book
-        # change book description
+        " change book description "
         bookRedescribe(input: BookRedescribeInput!): Book
-        # vote book
+        " vote book "
         bookVote(input: BookVoteInput!): Book
     }
 
     extend type Subscription {
-        # called whenever an existing book mutation is called
+        " called whenever mutation is applied to an existing book "
         bookUpdated(bookId: ID!): BookUpdateSubscription
-        # called when a new book is added
+        " called when a new book is added "
         bookCreated: Book
     }
 
@@ -34,21 +34,22 @@ const typeDefs = gql`
         mutation: String
     }
 
-    # used for redescribing a book by mutation
+    " used for redescribing a book by mutation "
     input BookVoteInput {
         id: ID!
         score: ScalarValidStarsVote!
     }
 
-    # used for redescribing a book by mutation
+    " used for redescribing a book by mutation "
     input BookRedescribeInput {
         id: ID!
         description: String!
     }
 
-    # used for creating a new book by mutation
+    " used for creating a new book by mutation "
     input BookCreateInput {
         name: String!
+        " The id of the writer who wrote the book "
         writerId: ID!
         description: String
     }
@@ -82,6 +83,10 @@ export default {
         },
         Mutation: {
             bookCreate: (root, {input}) => {
+                const bookWriter = mockWriters.find(writer => writer.id === input.writerId);
+                if (!bookWriter) {
+                    throw new Error(`A writer with the id: ${bookWriter}, does not exist`);
+                }
                 const newBook = createNewBook(input);
                 pubsub.publish('bookCreated', {
                     bookCreated: newBook

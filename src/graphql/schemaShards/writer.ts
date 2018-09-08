@@ -4,23 +4,23 @@ import {pubsub, withFilter} from 'src/graphql/subscriptionManager';
 
 const typeDefs = gql`
     extend type Query {
-        # list all writers
+        " list all writers "
         writerList: [Writer]
-        # find a writer by id
+        " find a writer by id "
         writerFindById(id: ID!): Writer
     }
 
     extend type Mutation {
-        # create a new writer
+        " create a new writer "
         writerCreate(input: WriterCreateInput!): Writer
     }
 
     extend type Subscription {
-        # called when a new writer is created
+        " called when a new writer is created "
         writerCreated: Writer
     }
 
-    # used for creating a new writer by mutation
+    " used for creating a new writer by mutation "
     input WriterCreateInput {
         name: String
         birthDay: String
