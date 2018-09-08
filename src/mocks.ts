@@ -24,7 +24,7 @@ export function createNewWriter(writerData: IWriter): IWriter {
     return writerData;
 }
 
-interface IBook {
+export interface IBook {
     id?: string;
     writerId: string;
     name: string;
@@ -33,7 +33,7 @@ interface IBook {
     votes: number;
 }
 
-interface IWriter {
+export interface IWriter {
     id?: string;
     name: string;
     birthDay: string;

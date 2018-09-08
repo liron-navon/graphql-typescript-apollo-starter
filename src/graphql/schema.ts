@@ -17,6 +17,10 @@ const schema = mergeRawSchemas(
                 type Mutation {
                     _empty: String
                 }
+
+                type Subscription {
+                    _empty: String
+                }
             `
         ].concat(graphqlEnums),
         resolvers: {}

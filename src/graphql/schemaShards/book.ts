@@ -1,5 +1,6 @@
-import {mockBooks, mockWriters, createNewBook} from 'src/mocks';
+import {mockBooks, mockWriters, createNewBook, IBook} from 'src/mocks';
 import gql from 'graphql-tag';
+import { withFilter, pubsub } from 'src/graphql/subscriptionManager';
 
 const typeDefs = gql`
     extend type Query {
@@ -18,6 +19,16 @@ const typeDefs = gql`
         bookRedescribe(input: BookRedescribeInput!): Book
         # vote book
         bookVote(input: BookVoteInput!): Book
+    }
+
+    extend type Subscription {
+        bookUpdated(bookId: ID!): BookUpdateSubscription
+    }
+
+    type BookUpdateSubscription {
+        id: ID
+        book: Book
+        mutation: String
     }
 
     # used for redescribing a book by mutation
@@ -50,6 +61,15 @@ const typeDefs = gql`
     }
 `;
 
+function publishBookUpdate(mutation: string, book: IBook) {
+    pubsub.publish('bookUpdated', {
+        bookUpdated: {
+            book,
+            mutation
+        }
+    });
+}
+
 export default {
     resolvers: {
         Query: {
@@ -62,6 +82,7 @@ export default {
             bookRedescribe: (root, { input: { id, description } }) => {
                 const mutableBook = mockBooks.find(book => id === book.id);
                 mutableBook.description = description;
+                publishBookUpdate('bookRedescribe', mutableBook);
                 return mutableBook;
             },
             bookVote: (root, { input: { id, score } }) => {
@@ -72,8 +93,20 @@ export default {
                 bookToVoteFor.score = newScore;
                 bookToVoteFor.votes = newVotes;
 
+                publishBookUpdate('bookVote', bookToVoteFor);
                 return bookToVoteFor;
             },
+        },
+        Subscription: {
+            bookUpdated: {
+                subscribe: withFilter(
+                    () => pubsub.asyncIterator('bookUpdated'),
+                    (payload, update) => {
+                        const { bookUpdated: { book } } = payload
+                        return book.id === update.bookId;
+                    }
+                )
+            }
         },
         Book: {
             writer: book => mockWriters.find(({id}) => id === book.writerId)
