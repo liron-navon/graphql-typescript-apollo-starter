@@ -19,12 +19,12 @@ export function createNewBook(bookData: IBook): IBook {
 }
 
 export function createNewWriter(writerData: IWriter): IWriter {
-    writerData.id = createBookId();
+    writerData.id = createWriterId();
     mockWriters.push(writerData);
     return writerData;
 }
 
-interface IBook {
+export interface IBook {
     id?: string;
     writerId: string;
     name: string;
@@ -33,7 +33,7 @@ interface IBook {
     votes: number;
 }
 
-interface IWriter {
+export interface IWriter {
     id?: string;
     name: string;
     birthDay: string;
