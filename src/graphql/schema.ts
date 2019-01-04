@@ -1,4 +1,3 @@
-import {mergeWith, isArray} from 'lodash';
 import gql from 'graphql-tag';
 import {makeExecutableSchema} from 'graphql-tools';
 import graphqlEnums from 'src/graphql/enums';
