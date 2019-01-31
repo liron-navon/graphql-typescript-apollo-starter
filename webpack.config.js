@@ -1,20 +1,25 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const webpack = require('webpack');
 
-const mode = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'development';
+const isDev = ['development', 'test', 'staging'].includes(env);
+const isProd = !isDev;
 const dist = path.join(__dirname, 'dist');
+const filterUndefined = p => p === undefined;
 
 module.exports = {
-    mode,
+    mode: isDev ? 'development' : 'production' ,
     target: 'node',
     externals: [nodeExternals()],
     devtool: "source-map",
     entry: "./src/index.ts",
     stats: "verbose",
     plugins: [
-        new CleanWebpackPlugin(dist, {}),
-    ],
+        isProd && new CleanWebpackPlugin({}),
+        isDev && new webpack.HotModuleReplacementPlugin({}),
+    ].filter(filterUndefined),
     output: {
         path: dist,
         filename: "server.js"
@@ -29,8 +34,18 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
+                enforce: 'pre',
+                use: [
+                    {
+                        loader: 'tslint-loader',
+                        options: {}
+                    }
+                ]
+            },
+            {
+                test: /\.ts$/,
                 loader: "ts-loader"
-            }
+            },
         ]
     }
 };

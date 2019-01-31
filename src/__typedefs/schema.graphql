@@ -1,0 +1,114 @@
+# source: http://localhost:3000/graphql
+# timestamp: Thu Jan 31 2019 02:28:29 GMT+0100 (Central European Standard Time)
+
+type Book {
+  id: ID
+  writerId: ID
+  name: String
+  writer: Writer
+  description: String
+  score: Float
+  votes: Int
+}
+
+""" used for creating a new book by mutation """
+input BookCreateInput {
+  name: String!
+
+  """ The id of the writer who wrote the book """
+  writerId: ID!
+  description: String
+}
+
+""" used for redescribing a book by mutation """
+input BookRedescribeInput {
+  id: ID!
+  description: String!
+}
+
+type BookUpdateSubscription {
+  id: ID
+  book: Book
+  mutation: String
+}
+
+""" used for redescribing a book by mutation """
+input BookVoteInput {
+  id: ID!
+  score: ScalarValidStarsVote!
+}
+
+enum CountryEnum {
+  US
+  BL
+  MX
+  CH
+  UK
+  RU
+}
+
+type Mutation {
+  _empty: String
+
+  """ create a new writer """
+  writerCreate(input: WriterCreateInput!): Writer
+
+  """ create a new book """
+  bookCreate(input: BookCreateInput!): Book
+
+  """ change book description """
+  bookRedescribe(input: BookRedescribeInput!): Book
+
+  """ vote book """
+  bookVote(input: BookVoteInput!): Book
+}
+
+type Query {
+  _empty: String
+
+  """ list all writers """
+  writerList: [Writer]
+
+  """ find a writer by id """
+  writerFindById(id: ID!): Writer
+
+  """ list all books """
+  bookList: [Book]
+
+  """ find a book by id """
+  bookFindById(id: ID!): Book
+
+  """ find books by writer id """
+  bookListByWriterId(writerId: ID!): [Book]
+}
+
+"""A stars vote between 0 and 5"""
+scalar ScalarValidStarsVote
+
+type Subscription {
+  _empty: String
+
+  """ called when a new writer is created """
+  writerCreated: Writer
+
+  """ called whenever mutation is applied to an existing book """
+  bookUpdated(bookId: ID!): BookUpdateSubscription
+
+  """ called when a new book is added """
+  bookCreated: Book
+}
+
+type Writer {
+  id: ID
+  name: String
+  birthDay: String
+  country: CountryEnum
+  books: [Book]
+}
+
+""" used for creating a new writer by mutation """
+input WriterCreateInput {
+  name: String
+  birthDay: String
+  country: CountryEnum
+}

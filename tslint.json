@@ -1,4 +1,9 @@
 {
+  "linterOptions": {
+    "exclude": [
+      "src/__gql-types"
+    ]
+  },
   "rules": {
     "arrow-return-shorthand": true,
     "callable-types": true,

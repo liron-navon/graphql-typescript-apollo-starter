@@ -7,7 +7,8 @@ import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { execute, subscribe } from 'graphql';
 
 const port = process.env.PORT || 3000;
-const isPlaygroundActive = process.env.NODE_ENV !== 'production';
+const env = process.env.NODE_ENV || 'development';
+const isPlaygroundActive = env !== 'production';
 
 // Regular express setup
 const app = express();
@@ -31,6 +32,7 @@ apolloServer.applyMiddleware({app, path: '/graphql'});
 // Start listening on the port
 const server = createServer(app);
 server.listen(port, () => {
+    console.log('environment:', env, process.env.NODE_ENV);
     console.log(`🚀 Server ready at http://localhost:${port}/graphql ${ isPlaygroundActive ? 'with' : 'without' } playground`);
 
     // Set up the WebSocket for handling GraphQL subscriptions
