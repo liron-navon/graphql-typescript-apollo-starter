@@ -9,7 +9,7 @@ import { GraphQLResolveInfo, GraphQLScalarType } from 'graphql';
 export { };
 
 declare global {
-  namespace GraphqlTypes {
+  namespace GQL {
     /*******************************
      *                             *
      *          TYPE DEFS          *
