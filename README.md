@@ -42,8 +42,8 @@ The graphql api is self documented, you can access the documentations through th
 
 
 ### Example usage
-
-You can subscribe to the writerCreated subscription like this in one tab:
+Let's see an example, you can run the development server using `nps dev`, and go to [http://localhost:3000/graphql](http://localhost:3000/graphql) (or change port with the PORT environment variable) to use the playground.
+In the playground you can subscribe to the `writerCreated` subscription like this in one tab:
 
 ```graphql
 subscription{
@@ -67,7 +67,7 @@ mutation createWriter($input:WriterCreateInput!) {
 }
 ```
 
-with this input
+with this input.
 ```json
 {
   "input": {
