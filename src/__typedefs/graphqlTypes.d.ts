@@ -15,93 +15,120 @@ declare global {
      *          TYPE DEFS          *
      *                             *
      *******************************/
-    export interface GQLQuery {
+    export interface Query {
       _empty?: string;
       
       /**
        *  list all writers 
        */
-      writerList?: Array<GQLWriter | null>;
+      writerList?: Array<Writer | null>;
       
       /**
        *  find a writer by id 
        */
-      writerFindById?: GQLWriter;
+      writerFindById?: Writer;
       
       /**
        *  list all books 
        */
-      bookList?: Array<GQLBook | null>;
+      bookList?: Array<Book | null>;
       
       /**
        *  find a book by id 
        */
-      bookFindById?: GQLBook;
+      bookFindById?: Book;
       
       /**
        *  find books by writer id 
        */
-      bookListByWriterId?: Array<GQLBook | null>;
+      bookListByWriterId?: Array<Book | null>;
     }
     
-    export interface GQLWriter {
+    /**
+     *  a writer definition 
+     */
+    export interface Writer {
       id?: string;
       name?: string;
+      
+      /**
+       *  when the writer was born 
+       */
       birthDay?: string;
-      country?: GQLCountryEnum;
-      books?: Array<GQLBook | null>;
+      
+      /**
+       *  the country that the writer lives in 
+       */
+      country?: CountryEnum;
+      
+      /**
+       *  a list of published books 
+       */
+      books?: Array<Book | null>;
     }
     
-    export type GQLCountryEnum = 'US' | 'BL' | 'MX' | 'CH' | 'UK' | 'RU';
+    export type CountryEnum =
+    'US' |
+    'BL' |
+    'MX' |
+    'CH' |
+    'UK' |
+    'RU' |
+    'IL' |
+    'NL' |
+    'JP';
     // NOTE: enum CountryEnum is generate as string union instead of string enum because the types is generated under global scope
     
-    export interface GQLBook {
+    /**
+     *  a book definition 
+     */
+    export interface Book {
       id?: string;
       writerId?: string;
       name?: string;
-      writer?: GQLWriter;
+      writer?: Writer;
       description?: string;
       score?: number;
       votes?: number;
     }
     
-    export interface GQLMutation {
+    export interface Mutation {
       _empty?: string;
       
       /**
        *  create a new writer 
        */
-      writerCreate?: GQLWriter;
+      writerCreate?: Writer;
       
       /**
        *  create a new book 
        */
-      bookCreate?: GQLBook;
+      bookCreate?: Book;
       
       /**
        *  change book description 
        */
-      bookRedescribe?: GQLBook;
+      bookRedescribe?: Book;
       
       /**
        *  vote book 
        */
-      bookVote?: GQLBook;
+      bookVote?: Book;
     }
     
     /**
      *  used for creating a new writer by mutation 
      */
-    export interface GQLWriterCreateInput {
+    export interface WriterCreateInput {
       name?: string;
       birthDay?: string;
-      country?: GQLCountryEnum;
+      country?: CountryEnum;
     }
     
     /**
      *  used for creating a new book by mutation 
      */
-    export interface GQLBookCreateInput {
+    export interface BookCreateInput {
       name: string;
       
       /**
@@ -114,7 +141,7 @@ declare global {
     /**
      *  used for redescribing a book by mutation 
      */
-    export interface GQLBookRedescribeInput {
+    export interface BookRedescribeInput {
       id: string;
       description: string;
     }
@@ -122,38 +149,45 @@ declare global {
     /**
      *  used for redescribing a book by mutation 
      */
-    export interface GQLBookVoteInput {
+    export interface BookVoteInput {
       id: string;
-      score: GQLScalarValidStarsVote;
+      score: ScalarValidStarsVote;
     }
     
     /**
      * A stars vote between 0 and 5
      */
-    export type GQLScalarValidStarsVote = any;
+    export type ScalarValidStarsVote = any;
     
-    export interface GQLSubscription {
+    export interface Subscription {
       _empty?: string;
       
       /**
        *  called when a new writer is created 
        */
-      writerCreated?: GQLWriter;
+      writerCreated?: Writer;
       
       /**
        *  called whenever mutation is applied to an existing book 
        */
-      bookUpdated?: GQLBookUpdateSubscription;
+      bookUpdated?: BookUpdateSubscription;
       
       /**
        *  called when a new book is added 
        */
-      bookCreated?: GQLBook;
+      bookCreated?: Book;
     }
     
-    export interface GQLBookUpdateSubscription {
+    /**
+     *  The return value for book updates 
+     */
+    export interface BookUpdateSubscription {
       id?: string;
-      book?: GQLBook;
+      book?: Book;
+      
+      /**
+       *  the type of mutation that happend to the book 
+       */
       mutation?: string;
     }
     
@@ -167,16 +201,16 @@ declare global {
      * Note that this type is designed to be compatible with graphql-tools resolvers
      * However, you can still use other generated interfaces to make your resolver type-safed
      */
-    export interface GQLResolver {
-      Query?: GQLQueryTypeResolver;
-      Writer?: GQLWriterTypeResolver;
-      Book?: GQLBookTypeResolver;
-      Mutation?: GQLMutationTypeResolver;
+    export interface Resolver {
+      Query?: QueryTypeResolver;
+      Writer?: WriterTypeResolver;
+      Book?: BookTypeResolver;
+      Mutation?: MutationTypeResolver;
       ScalarValidStarsVote?: GraphQLScalarType;
-      Subscription?: GQLSubscriptionTypeResolver;
-      BookUpdateSubscription?: GQLBookUpdateSubscriptionTypeResolver;
+      Subscription?: SubscriptionTypeResolver;
+      BookUpdateSubscription?: BookUpdateSubscriptionTypeResolver;
     }
-    export interface GQLQueryTypeResolver<TParent = any> {
+    export interface QueryTypeResolver<TParent = any> {
       _empty?: QueryTo_emptyResolver<TParent>;
       writerList?: QueryToWriterListResolver<TParent>;
       writerFindById?: QueryToWriterFindByIdResolver<TParent>;
@@ -186,39 +220,39 @@ declare global {
     }
     
     export interface QueryTo_emptyResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface QueryToWriterListResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface QueryToWriterFindByIdArgs {
       id: string;
     }
     export interface QueryToWriterFindByIdResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: QueryToWriterFindByIdArgs, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: QueryToWriterFindByIdArgs, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface QueryToBookListResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface QueryToBookFindByIdArgs {
       id: string;
     }
     export interface QueryToBookFindByIdResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: QueryToBookFindByIdArgs, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: QueryToBookFindByIdArgs, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface QueryToBookListByWriterIdArgs {
       writerId: string;
     }
     export interface QueryToBookListByWriterIdResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: QueryToBookListByWriterIdArgs, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: QueryToBookListByWriterIdArgs, context: any, info: GraphQLResolveInfo): TResult;
     }
     
-    export interface GQLWriterTypeResolver<TParent = any> {
+    export interface WriterTypeResolver<TParent = any> {
       id?: WriterToIdResolver<TParent>;
       name?: WriterToNameResolver<TParent>;
       birthDay?: WriterToBirthDayResolver<TParent>;
@@ -227,26 +261,26 @@ declare global {
     }
     
     export interface WriterToIdResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface WriterToNameResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface WriterToBirthDayResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface WriterToCountryResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface WriterToBooksResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
-    export interface GQLBookTypeResolver<TParent = any> {
+    export interface BookTypeResolver<TParent = any> {
       id?: BookToIdResolver<TParent>;
       writerId?: BookToWriterIdResolver<TParent>;
       name?: BookToNameResolver<TParent>;
@@ -257,34 +291,34 @@ declare global {
     }
     
     export interface BookToIdResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookToWriterIdResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookToNameResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookToWriterResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookToDescriptionResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookToScoreResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookToVotesResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
-    export interface GQLMutationTypeResolver<TParent = any> {
+    export interface MutationTypeResolver<TParent = any> {
       _empty?: MutationTo_emptyResolver<TParent>;
       writerCreate?: MutationToWriterCreateResolver<TParent>;
       bookCreate?: MutationToBookCreateResolver<TParent>;
@@ -293,38 +327,38 @@ declare global {
     }
     
     export interface MutationTo_emptyResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface MutationToWriterCreateArgs {
-      input: GQLWriterCreateInput;
+      input: WriterCreateInput;
     }
     export interface MutationToWriterCreateResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: MutationToWriterCreateArgs, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: MutationToWriterCreateArgs, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface MutationToBookCreateArgs {
-      input: GQLBookCreateInput;
+      input: BookCreateInput;
     }
     export interface MutationToBookCreateResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: MutationToBookCreateArgs, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: MutationToBookCreateArgs, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface MutationToBookRedescribeArgs {
-      input: GQLBookRedescribeInput;
+      input: BookRedescribeInput;
     }
     export interface MutationToBookRedescribeResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: MutationToBookRedescribeArgs, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: MutationToBookRedescribeArgs, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface MutationToBookVoteArgs {
-      input: GQLBookVoteInput;
+      input: BookVoteInput;
     }
     export interface MutationToBookVoteResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: MutationToBookVoteArgs, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: MutationToBookVoteArgs, context: any, info: GraphQLResolveInfo): TResult;
     }
     
-    export interface GQLSubscriptionTypeResolver<TParent = any> {
+    export interface SubscriptionTypeResolver<TParent = any> {
       _empty?: SubscriptionTo_emptyResolver<TParent>;
       writerCreated?: SubscriptionToWriterCreatedResolver<TParent>;
       bookUpdated?: SubscriptionToBookUpdatedResolver<TParent>;
@@ -332,44 +366,44 @@ declare global {
     }
     
     export interface SubscriptionTo_emptyResolver<TParent = any, TResult = any> {
-      resolve?: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => TResult | Promise<TResult>;
-      subscribe: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+      resolve?: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => TResult;
+      subscribe: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult>;
     }
     
     export interface SubscriptionToWriterCreatedResolver<TParent = any, TResult = any> {
-      resolve?: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => TResult | Promise<TResult>;
-      subscribe: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+      resolve?: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => TResult;
+      subscribe: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult>;
     }
     
     export interface SubscriptionToBookUpdatedArgs {
       bookId: string;
     }
     export interface SubscriptionToBookUpdatedResolver<TParent = any, TResult = any> {
-      resolve?: (parent: TParent, args: SubscriptionToBookUpdatedArgs, context: any, info: GraphQLResolveInfo) => TResult | Promise<TResult>;
-      subscribe: (parent: TParent, args: SubscriptionToBookUpdatedArgs, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+      resolve?: (parent: TParent, args: SubscriptionToBookUpdatedArgs, context: any, info: GraphQLResolveInfo) => TResult;
+      subscribe: (parent: TParent, args: SubscriptionToBookUpdatedArgs, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult>;
     }
     
     export interface SubscriptionToBookCreatedResolver<TParent = any, TResult = any> {
-      resolve?: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => TResult | Promise<TResult>;
-      subscribe: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+      resolve?: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => TResult;
+      subscribe: (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo) => AsyncIterator<TResult>;
     }
     
-    export interface GQLBookUpdateSubscriptionTypeResolver<TParent = any> {
+    export interface BookUpdateSubscriptionTypeResolver<TParent = any> {
       id?: BookUpdateSubscriptionToIdResolver<TParent>;
       book?: BookUpdateSubscriptionToBookResolver<TParent>;
       mutation?: BookUpdateSubscriptionToMutationResolver<TParent>;
     }
     
     export interface BookUpdateSubscriptionToIdResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookUpdateSubscriptionToBookResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
     export interface BookUpdateSubscriptionToMutationResolver<TParent = any, TResult = any> {
-      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult | Promise<TResult>;
+      (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
     }
     
   }

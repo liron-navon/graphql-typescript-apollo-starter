@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 
+// an enum that defines countries
 export default gql`
     enum CountryEnum {
         US
@@ -8,5 +9,8 @@ export default gql`
         CH
         UK
         RU
+        IL
+        NL
+        JP
     }
 `;

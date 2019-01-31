@@ -1,6 +1,7 @@
 # source: http://localhost:3000/graphql
-# timestamp: Thu Jan 31 2019 02:28:29 GMT+0100 (Central European Standard Time)
+# timestamp: Fri Feb 01 2019 00:07:50 GMT+0100 (Central European Standard Time)
 
+""" a book definition """
 type Book {
   id: ID
   writerId: ID
@@ -26,9 +27,12 @@ input BookRedescribeInput {
   description: String!
 }
 
+""" The return value for book updates """
 type BookUpdateSubscription {
   id: ID
   book: Book
+
+  """ the type of mutation that happend to the book """
   mutation: String
 }
 
@@ -45,6 +49,9 @@ enum CountryEnum {
   CH
   UK
   RU
+  IL
+  NL
+  JP
 }
 
 type Mutation {
@@ -98,11 +105,18 @@ type Subscription {
   bookCreated: Book
 }
 
+""" a writer definition """
 type Writer {
   id: ID
   name: String
+
+  """ when the writer was born """
   birthDay: String
+
+  """ the country that the writer lives in """
   country: CountryEnum
+
+  """ a list of published books """
   books: [Book]
 }
 

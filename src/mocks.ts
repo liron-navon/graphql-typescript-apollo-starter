@@ -1,48 +1,35 @@
-// this all think is for mocking purpose, replace this on a real app
-let booksId = 0;
-let writersId = 0;
+/**
+ * This file is used to mock a database
+ */
+import { v4 as createUUID } from 'uuid';
 
-function createWriterId(): string {
-    return `writer-${writersId++}`;
+// create a new book
+export function createNewBook(bookInput: GQL.BookCreateInput): GQL.Book {
+    const newBook = {
+        ...bookInput,
+        id: createUUID(),
+        votes: 0,
+        score: 0
+    };
+
+    mockBooks.push(newBook);
+    return newBook;
 }
 
-function createBookId(): string {
-    return `book-${booksId++}`;
+// create a new writer
+export function createNewWriter(writerInput: GQL.WriterCreateInput): GQL.Writer {
+    const newWriter = {
+        ...writerInput,
+        id: createUUID()
+    };
+
+    mockWriters.push(newWriter);
+    return newWriter;
 }
 
-export function createNewBook(bookData: IBook): IBook {
-    bookData.id = createBookId();
-    bookData.votes = 0;
-    bookData.score = 0;
-    mockBooks.push(bookData);
-    return bookData;
-}
-
-export function createNewWriter(writerData: IWriter): IWriter {
-    writerData.id = createWriterId();
-    mockWriters.push(writerData);
-    return writerData;
-}
-
-export interface IBook {
-    id?: string;
-    writerId: string;
-    name: string;
-    description: string;
-    score: number;
-    votes: number;
-}
-
-export interface IWriter {
-    id?: string;
-    name: string;
-    birthDay: string;
-    country: string;
-}
-
-export const mockBooks: IBook[] = [
+export const mockBooks: GQL.Book[] = [
     {
-        id: createBookId(),
+        id: createUUID(),
         writerId: 'writer-0',
         name: 'The Outsider',
         score: 4,
@@ -54,7 +41,7 @@ export const mockBooks: IBook[] = [
         fictional police documents.`
     },
     {
-        id: createBookId(),
+        id: createUUID(),
         writerId: 'writer-0',
         name: 'Cujo',
         score: 3.5,
@@ -65,7 +52,7 @@ export const mockBooks: IBook[] = [
          The book was written during a period when King was on a cocaine binge.`
     },
     {
-        id: createBookId(),
+        id: createUUID(),
         writerId: 'writer-1',
         name: 'Moby-Dick',
         score: 4.7,
@@ -75,7 +62,7 @@ export const mockBooks: IBook[] = [
         for revenge on Moby Dick, the white whale that on the ship's previous voyage bit off Ahab's leg at the knee.`
     },
     {
-        id: createBookId(),
+        id: createUUID(),
         writerId: 'writer-2',
         name: 'The Song of Achilles',
         score: 4.0,
@@ -85,7 +72,7 @@ export const mockBooks: IBook[] = [
         By all rights their paths should never cross, but Achilles takes the shamed prince as his friend`
     },
     {
-        id: createBookId(),
+        id: createUUID(),
         writerId: 'writer-2',
         name: 'Madeline Miller',
         score: 5.0,
@@ -98,21 +85,21 @@ export const mockBooks: IBook[] = [
     }
 ];
 
-export const mockWriters: IWriter[] = [
+export const mockWriters: GQL.Writer[] = [
     {
-        id: createWriterId(),
+        id: createUUID(),
         name: 'Stephen King',
         birthDay: 'September 21, 1947',
         country: 'US'
     },
     {
-        id: createWriterId(),
+        id: createUUID(),
         name: 'Herman Melville',
         birthDay: 'September 28, 1891',
         country: 'US'
     },
     {
-        id: createWriterId(),
+        id: createUUID(),
         name: 'Madeline Miller',
         birthDay: 'July 24, 1978',
         country: 'US'

@@ -27,11 +27,15 @@ const typeDefs = gql`
         country: CountryEnum
     }
 
+    " a writer definition "
     type Writer {
         id: ID
         name: String
+        " when the writer was born "
         birthDay: String
+        " the country that the writer lives in "
         country: CountryEnum
+        " a list of published books "
         books: [Book]
     }
 `;
@@ -39,11 +43,14 @@ const typeDefs = gql`
 export default {
     resolvers: {
         Query: {
+            // get a list of all the writers
             writerList: () => mockWriters,
-            writerFindById: (root, {id}) => mockWriters.find(b => b.id === id)
+            // find a writer by it's id
+            writerFindById: (root, {id}: GQL.QueryToWriterFindByIdArgs) => mockWriters.find(b => b.id === id)
         },
         Mutation: {
-            writerCreate: (root, {input}) => {
+            // create a new writer
+            writerCreate: (root, {input}: GQL.MutationToWriterCreateArgs) => {
                 const newWriter = createNewWriter(input);
                 pubsub.publish('writerCreated', {
                     writerCreated: newWriter

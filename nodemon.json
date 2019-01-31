@@ -1,5 +1,0 @@
-{
-  "watch": ["dist"],
-  "exec": "npm run start" ,
-  "ext": "js json ts graphql"
-}

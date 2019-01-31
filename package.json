@@ -4,23 +4,7 @@
   "description": "A starter template for an apollo graphql server with typescript",
   "main": "src/index.ts",
   "scripts": {
-    "// build": "build the server for production",
-    "build": "NODE_ENV='production'webpack",
-    "// dev": "run the server in development mode, watch for changes and restart the server after each change",
-    "dev": "NODE_ENV='development' concurrently --kill-others-on-fail \"webpack --watch\" \"npm run start:delay:watch\"",
-    "// start": "start:* are commands start our server, watch it, or delay before watching it",
-    "start": "node ./dist/server.js",
-    "start:watch": "nodemon --watch dist -e js,ts,graphql,json npm start",
-    "start:delay:watch": "wait-on --delay 6000 ./dist/server.js && npm run start:watch",
-    "// test": "test:* are commands to run tests with jest",
-    "test": "jest --forceExit --verbose --detectOpenHandles",
-    "test:watch": "npm run test -- --watchAll",
-    "// tslint": "the tslint is used to lint our typescript files",
-    "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "// gen": "gen:* are commands to generate assets from our server, typdefinitions and schemas",
-    "gen:download-schema": "graphql get-schema",
-    "gen:convert-schema-to-typescript": "graphql-schema-typescript generate-ts  --global=true --namespace=GQL --asyncResult=true --output=./src/__typedefs/graphqlTypes.d.ts ./src/__typedefs",
-    "gen:typedefs": "npm run gen:download-schema && npm run gen:convert-schema-to-typescript"
+    "//": "We use nps to manage the scripts, checkout package-scripts.js for those."
   },
   "author": "liron-navon",
   "repository": "https://github.com/liron-navon/graphql-typescript-apollo-starter",
@@ -34,7 +18,8 @@
     "graphql-scalar-types": "^2.0.0",
     "graphql-tools": "^3.1.1",
     "lodash": "^4.17.10",
-    "subscriptions-transport-ws": "^0.9.14"
+    "subscriptions-transport-ws": "^0.9.14",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/express": "^4.16.0",

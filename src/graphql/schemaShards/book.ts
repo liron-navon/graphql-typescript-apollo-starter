@@ -1,4 +1,4 @@
-import {mockBooks, mockWriters, createNewBook, IBook} from 'src/mocks';
+import {mockBooks, mockWriters, createNewBook} from 'src/mocks';
 import gql from 'graphql-tag';
 import {withFilter, pubsub} from 'src/graphql/subscriptionManager';
 
@@ -28,9 +28,11 @@ const typeDefs = gql`
         bookCreated: Book
     }
 
+    " The return value for book updates "
     type BookUpdateSubscription {
         id: ID
         book: Book
+        " the type of mutation that happend to the book "
         mutation: String
     }
 
@@ -54,6 +56,7 @@ const typeDefs = gql`
         description: String
     }
 
+    " a book definition "
     type Book {
         id: ID
         writerId: ID
@@ -65,7 +68,8 @@ const typeDefs = gql`
     }
 `;
 
-function publishBookUpdate(mutation: string, book: IBook) {
+// publish that a book was updated
+function publishBookUpdate(mutation: string, book: GQL.Book) {
     pubsub.publish('bookUpdated', {
         bookUpdated: {
             book,
@@ -74,58 +78,73 @@ function publishBookUpdate(mutation: string, book: IBook) {
     });
 }
 
+// publish that a book was created
+function publishBookCreated(book: GQL.Book) {
+    pubsub.publish('bookCreated', {
+        bookCreated: book
+    });
+}
+
 export default {
     resolvers: {
         Query: {
+            // get the list of books
             bookList: () => mockBooks,
-            bookFindById: (root, {id}) => mockBooks.find(b => b.id === id),
-            bookListByWriterId: (root, {id}) => mockBooks.filter(b => b.writerId === id),
+            // find a book by it's id
+            bookFindById: (root, {id}: GQL.QueryToBookFindByIdArgs) => mockBooks.find(b => b.id === id),
+            // find books by a writer id
+            bookListByWriterId: (root, {writerId}: GQL.QueryToBookListByWriterIdArgs) => mockBooks.filter(b => b.writerId === writerId),
         },
         Mutation: {
-            bookCreate: (root, {input}) => {
+            // create a book
+            bookCreate: (root, {input}: GQL.MutationToBookCreateArgs) => {
                 const bookWriter = mockWriters.find(writer => writer.id === input.writerId);
                 if (!bookWriter) {
                     throw new Error(`A writer with the id: ${bookWriter}, does not exist`);
                 }
                 const newBook = createNewBook(input);
-                pubsub.publish('bookCreated', {
-                    bookCreated: newBook
-                });
+                publishBookCreated(newBook);
                 return newBook;
             },
-            bookRedescribe: (root, {input: {id, description}}) => {
-                const mutableBook = mockBooks.find(book => id === book.id);
-                mutableBook.description = description;
-                publishBookUpdate('bookRedescribe', mutableBook);
-                return mutableBook;
+            // change the description for a book
+            bookRedescribe: (root, {input}: GQL.MutationToBookRedescribeArgs) => {
+                const {id, description} = input;
+                const book = mockBooks.find(b => id === b.id);
+                book.description = description;
+                publishBookUpdate('bookRedescribe', book);
+                return book;
             },
-            bookVote: (root, {input: {id, score}}) => {
-                const bookToVoteFor = mockBooks.find(book => id === book.id);
-                const newVotes = bookToVoteFor.votes + 1;
-                const newScore = ((bookToVoteFor.score * bookToVoteFor.votes) + score) / newVotes;
+            // vote for a book
+            bookVote: (root, {input}: GQL.MutationToBookVoteArgs) => {
+                const {id, score} = input;
+                const book = mockBooks.find(b => id === b.id);
+                book.votes = book.votes + 1;
 
-                bookToVoteFor.score = newScore;
-                bookToVoteFor.votes = newVotes;
-
-                publishBookUpdate('bookVote', bookToVoteFor);
-                return bookToVoteFor;
+                // calculate the new score
+                const newScore = ((book.score * book.votes) + score) / book.votes;
+                book.score = newScore;
+                publishBookUpdate('bookVote', book);
+                return book;
             },
         },
         Subscription: {
+            // emits an event when a book is updated
             bookUpdated: {
                 subscribe: withFilter(
                     () => pubsub.asyncIterator('bookUpdated'),
-                    (payload, update) => {
-                        const {bookUpdated: {book}} = payload;
-                        return book.id === update.bookId;
-                    }
+                    (
+                        {bookUpdated}: { bookUpdated: GQL.BookUpdateSubscription },
+                        {bookId}: GQL.SubscriptionToBookUpdatedArgs
+                    ) => bookUpdated.book.id === bookId
                 )
             },
+            // emits an event when a book is created
             bookCreated: {
                 subscribe: () => pubsub.asyncIterator('bookCreated')
             }
         },
         Book: {
+            // a resolver to find the writer through a book
             writer: book => mockWriters.find(({id}) => id === book.writerId)
         }
     },

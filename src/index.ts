@@ -36,7 +36,7 @@ server.listen(port, () => {
     console.log(`🚀 Server ready at http://localhost:${port}/graphql ${ isPlaygroundActive ? 'with' : 'without' } playground`);
 
     // Set up the WebSocket for handling GraphQL subscriptions
-    const sunscriptionServer = new SubscriptionServer({
+    const subscriptionServer = new SubscriptionServer({
         execute,
         subscribe,
         schema
