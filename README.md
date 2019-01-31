@@ -11,7 +11,7 @@ Since I'm sharding the entire project to chunks of typedefs with the gql tag, yo
 
 ### Getting started
 
-Run in development mode with hot reloading `nps dev`
+- Run in development mode with hot reloading `nps dev`
 
 - Build `nps build`
 
