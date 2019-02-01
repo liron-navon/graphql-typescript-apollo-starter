@@ -1,6 +1,7 @@
 import {mockBooks, mockWriters, createNewBook} from 'src/mocks';
 import gql from 'graphql-tag';
 import {withFilter, pubsub} from 'src/graphql/subscriptionManager';
+import {authenticateContext} from 'src/auth/auth';
 
 const typeDefs = gql`
     extend type Query {
@@ -89,15 +90,25 @@ export default {
     resolvers: {
         Query: {
             // get the list of books
-            bookList: () => mockBooks,
+            bookList: (root, args, context) => {
+                authenticateContext(context);
+                return mockBooks;
+            },
             // find a book by it's id
-            bookFindById: (root, {id}: GQL.QueryToBookFindByIdArgs) => mockBooks.find(b => b.id === id),
+            bookFindById: (root, {id}: GQL.QueryToBookFindByIdArgs, context) => {
+                authenticateContext(context);
+                return mockBooks.find(b => b.id === id);
+            },
             // find books by a writer id
-            bookListByWriterId: (root, {writerId}: GQL.QueryToBookListByWriterIdArgs) => mockBooks.filter(b => b.writerId === writerId),
+            bookListByWriterId: (root, {writerId}: GQL.QueryToBookListByWriterIdArgs, context) => {
+                authenticateContext(context);
+                return mockBooks.filter(b => b.writerId === writerId);
+            },
         },
         Mutation: {
             // create a book
-            bookCreate: (root, {input}: GQL.MutationToBookCreateArgs) => {
+            bookCreate: (root, {input}: GQL.MutationToBookCreateArgs, context) => {
+                authenticateContext(context);
                 const bookWriter = mockWriters.find(writer => writer.id === input.writerId);
                 if (!bookWriter) {
                     throw new Error(`A writer with the id: ${bookWriter}, does not exist`);
@@ -107,7 +118,8 @@ export default {
                 return newBook;
             },
             // change the description for a book
-            bookRedescribe: (root, {input}: GQL.MutationToBookRedescribeArgs) => {
+            bookRedescribe: (root, {input}: GQL.MutationToBookRedescribeArgs, context) => {
+                authenticateContext(context);
                 const {id, description} = input;
                 const book = mockBooks.find(b => id === b.id);
                 book.description = description;
@@ -115,7 +127,8 @@ export default {
                 return book;
             },
             // vote for a book
-            bookVote: (root, {input}: GQL.MutationToBookVoteArgs) => {
+            bookVote: (root, {input}: GQL.MutationToBookVoteArgs, context) => {
+                authenticateContext(context);
                 const {id, score} = input;
                 const book = mockBooks.find(b => id === b.id);
                 book.votes = book.votes + 1;
@@ -131,7 +144,10 @@ export default {
             // emits an event when a book is updated
             bookUpdated: {
                 subscribe: withFilter(
-                    () => pubsub.asyncIterator('bookUpdated'),
+                    (root, args, context) => {
+                        authenticateContext(context);
+                        return pubsub.asyncIterator('bookUpdated');
+                    },
                     (
                         {bookUpdated}: { bookUpdated: GQL.BookUpdateSubscription },
                         {bookId}: GQL.SubscriptionToBookUpdatedArgs
@@ -140,7 +156,10 @@ export default {
             },
             // emits an event when a book is created
             bookCreated: {
-                subscribe: () => pubsub.asyncIterator('bookCreated')
+                subscribe: (root, args, context) => {
+                    authenticateContext(context);
+                    return pubsub.asyncIterator('bookCreated');
+                }
             }
         },
         Book: {

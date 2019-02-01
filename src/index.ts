@@ -5,6 +5,8 @@ import * as cors from 'cors';
 import {createServer} from 'http';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { execute, subscribe } from 'graphql';
+import {handleGraphQLContext, handleSubscriptionsContext} from 'src/auth/auth';
+import authRoutes from './auth/routes';
 
 const port = process.env.PORT || 3000;
 const env = process.env.NODE_ENV || 'development';
@@ -13,6 +15,7 @@ const isPlaygroundActive = env !== 'production';
 // Regular express setup
 const app = express();
 app.use(cors());
+app.use('/auth', authRoutes);
 
 // Create an apollo server
 const apolloServer = new ApolloServer({
@@ -23,7 +26,8 @@ const apolloServer = new ApolloServer({
             'editor.theme': 'dark', // change to light if you prefer
             'editor.cursorShape': 'line' // possible values: 'line', 'block', 'underline'
         }
-    } : false
+    } : false,
+    context: handleGraphQLContext
 });
 
 // Add graphql routes
@@ -39,7 +43,8 @@ server.listen(port, () => {
     const subscriptionServer = new SubscriptionServer({
         execute,
         subscribe,
-        schema
+        schema,
+        onConnect: handleSubscriptionsContext,
     }, {
         server,
         path: '/subscriptions',
