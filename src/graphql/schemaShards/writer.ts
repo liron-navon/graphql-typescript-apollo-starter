@@ -1,6 +1,6 @@
 import {mockBooks, mockWriters, createNewWriter} from 'src/mocks';
 import gql from 'graphql-tag';
-import {pubsub, withFilter} from 'src/graphql/subscriptionManager';
+import {pubsub} from 'src/graphql/subscriptionManager';
 
 const typeDefs = gql`
     extend type Query {

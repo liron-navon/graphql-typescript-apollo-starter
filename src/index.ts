@@ -1,11 +1,12 @@
 import {ApolloServer} from 'apollo-server-express';
-import * as express from 'express';
-import schema from 'src/graphql/schema';
-import * as cors from 'cors';
 import {createServer} from 'http';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { execute, subscribe } from 'graphql';
 import {handleGraphQLContext, handleSubscriptionsContext} from 'src/auth/auth';
+import {makeExecutableSchema} from 'graphql-tools';
+import * as express from 'express';
+import * as cors from 'cors';
+import rawSchema from 'src/graphql/schema';
 import authRoutes from './auth/routes';
 
 const port = process.env.PORT || 3000;
@@ -16,6 +17,8 @@ const isPlaygroundActive = env !== 'production';
 const app = express();
 app.use(cors());
 app.use('/auth', authRoutes);
+
+const schema = makeExecutableSchema(rawSchema);
 
 // Create an apollo server
 const apolloServer = new ApolloServer({

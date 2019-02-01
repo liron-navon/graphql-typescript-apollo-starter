@@ -41,7 +41,8 @@ module.exports = {
         },
         test: {
             // run tests with jest
-            default: 'jest --forceExit --verbose --detectOpenHandles',
+            default: 'jest',
+            // default: 'jest --forceExit --verbose --detectOpenHandles',
             // run tests with jest and watch
             watch: 'jest --verbose --detectOpenHandles'
         },

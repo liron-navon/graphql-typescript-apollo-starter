@@ -1,15 +1,14 @@
 import compiledSchema from 'src/graphql/schema';
 import {cloneDeep} from 'lodash';
 import {graphql} from 'graphql';
-import {addMockFunctionsToSchema} from 'graphql-tools';
+import {addMockFunctionsToSchema, makeExecutableSchema} from 'graphql-tools';
+
+// create a mocked schema for the tests
+const schema = makeExecutableSchema(compiledSchema);
+addMockFunctionsToSchema({schema});
 
 describe('Booking Schema', () => {
-
-    const schema = cloneDeep(compiledSchema);
-    addMockFunctionsToSchema({schema}); // add mock responses
-
     test('booksList query should work', () => {
-        expect.assertions(1);
         const query = `
             {
                 books: bookList {
@@ -25,7 +24,6 @@ describe('Booking Schema', () => {
     });
 
     test('bookFindById query should work', () => {
-        expect.assertions(1);
         const query = `
             {
                 book: bookFindById(id: "${'book-0'}") {

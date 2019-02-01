@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
-import {makeExecutableSchema} from 'graphql-tools';
 import {mergeRawSchemas} from 'src/graphql/helpers/mergeRawSchemas';
+
 import graphqlEnums from 'src/graphql/enums';
 import graphqlScalarTypes from 'src/graphql/scalarTypes';
 import graphqlSchemaShards from 'src/graphql/schemaShards';
@@ -31,4 +31,4 @@ const schema = mergeRawSchemas(
 );
 
 // we turn the schema into an object apollo can use to create an api
-export default makeExecutableSchema(schema);
+export default schema;
